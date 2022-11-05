@@ -2,6 +2,9 @@
   "name": "ember-can",
   "version": "1.0.0",
   "description": "Ember CAN driver",
+  "dependencies": {
+    "can-gen": "rolling"
+  },
   "build": {
     "libLDFMode": "deep"
   }
