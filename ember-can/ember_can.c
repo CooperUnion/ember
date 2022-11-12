@@ -1,11 +1,11 @@
 #include "ember_can.h"
+#include "ember_can_callbacks.h"
 
 #include <esp_ota_ops.h>
 #include <driver/twai.h>
 #include <stdio.h>
 
 #include "common.h"
-#include "cuber_base.h"
 #include "ember_taskglue.h"
 
 // ######        DEFINES        ###### //
@@ -93,7 +93,7 @@ static void can_send_msg(const twai_message_t *message)
     esp_err_t r = twai_transmit(message, 0);
 
     if (r != ESP_OK) {
-        base_set_state_lost_can();
+        ember_can_callback_notify_lost_can();
         // attempt recovery?
     }
 }
