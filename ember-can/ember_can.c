@@ -9,14 +9,15 @@
 
 #include "common.h"
 #include "ember_taskglue.h"
+#include "node_pins.h"
 #include "opencan_callbacks.h"
 #include "opencan_rx.h"
 #include "opencan_tx.h"
 
 // ######        DEFINES        ###### //
 
-#define CAN_TX_GPIO 19
-#define CAN_RX_GPIO 18
+#define CAN_TX_GPIO NODE_BOARD_PIN_CANTX
+#define CAN_RX_GPIO NODE_BOARD_PIN_CANRX
 
 // ######      PROTOTYPES       ###### //
 
