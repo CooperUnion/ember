@@ -1,7 +1,7 @@
 #include "watchdog.h"
 
 #include <freertos/FreeRTOS.h>
-#include <soc/rtc_wdt.h>
+// #include <soc/rtc_wdt.h>
 
 #include "common.h"
 
@@ -34,9 +34,9 @@ static volatile bool task_1kHz_checkin;
  */
 static IRAM_ATTR void kick_rtc_watchdog()
 {
-    rtc_wdt_protect_off();
-    rtc_wdt_feed();
-    rtc_wdt_protect_on();
+    // rtc_wdt_protect_off();
+    // rtc_wdt_feed();
+    // rtc_wdt_protect_on();
 }
 
 // ######   PUBLIC FUNCTIONS    ###### //
@@ -64,7 +64,7 @@ void task_1kHz_wdt_kick()
 /*
  * Checks task checkins and ensures timing deadlines were met. Incorrect timing
  * will latch (static bool violated) and cause the watchdog to reset the system.
- * 
+ *
  * Run this function in the 1kHz interrupt.
  */
 void IRAM_ATTR task_wdt_servicer()
@@ -126,24 +126,25 @@ void IRAM_ATTR task_wdt_servicer()
  * Set up and activate the rtc watchdog with the given timeout. Note that there
  * can only be one watchdog active at a time - this function will override any
  * previous active watchdog.
- * 
+ *
  * //todo: error handling
  */
 void set_up_rtc_watchdog(uint timeout_ms)
 {
-    rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
-    rtc_wdt_disable();
-    rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
-    rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
-    rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
-    rtc_wdt_enable();
-    rtc_wdt_protect_on(); // disables modifying the rtc watchdog registers
+    (void)timeout_ms;
+    // rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
+    // rtc_wdt_disable();
+    // rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
+    // rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
+    // rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
+    // rtc_wdt_enable();
+    // rtc_wdt_protect_on(); // disables modifying the rtc watchdog registers
 }
 
 
 /*
  * Configure the watchdog with a temporarily larger timeout so we can run the
- * taskinig init and call_init()'s and have some insurance against the system 
+ * taskinig init and call_init()'s and have some insurance against the system
  * hanging while we do it.
  */
 void set_up_rtc_watchdog_for_init()
@@ -152,7 +153,7 @@ void set_up_rtc_watchdog_for_init()
 }
 
 /*
- * Configure the watchdog with the final task-running timeout. 
+ * Configure the watchdog with the final task-running timeout.
  *
  * You're on very strict time once this happens!
  */
