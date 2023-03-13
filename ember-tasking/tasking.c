@@ -12,7 +12,7 @@
 // ######        DEFINES        ###### //
 
 #define TIMER_GROUP 0, 0
-#define TASK_STACK_SIZE 4000
+#define TASK_STACK_SIZE 8192
 
 // ######      PROTOTYPES       ###### //
 
@@ -76,7 +76,7 @@ static bool IRAM_ATTR task_granter(void* unused)
 
 /*
  * Set up the 1kHz timer interrupt task_granter(), but don't start it yet.
- * 
+ *
  * After this, it's ready to go - call timer_start(TIMER_GROUP) to start it.
  */
 static void create_tasking_interrupt()
