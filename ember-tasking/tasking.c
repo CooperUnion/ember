@@ -173,11 +173,12 @@ void tasking_init()
     static TaskHandle_t module_runner_100Hz_handle;
     static TaskHandle_t module_runner_1kHz_handle;
 
-    // we need to give more thought to the priorities here, I think
-    xTaskCreatePinnedToCore(module_runner_1Hz, "1_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_1Hz_handle, 0);
-    xTaskCreatePinnedToCore(module_runner_10Hz, "10_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_10Hz_handle, 0);
-    xTaskCreatePinnedToCore(module_runner_100Hz, "100_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_100Hz_handle, 0);
-    xTaskCreatePinnedToCore(module_runner_1kHz, "1k_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_1kHz_handle, 0);
+    // idle task has priority 0, app_main task has priority 1.
+    // we start the runner tasks at priority 4 and increase in order of frequency.
+    xTaskCreatePinnedToCore(module_runner_1Hz, "1_HZ", TASK_STACK_SIZE, 0, 4, &module_runner_1Hz_handle, 0);
+    xTaskCreatePinnedToCore(module_runner_10Hz, "10_HZ", TASK_STACK_SIZE, 0, 5, &module_runner_10Hz_handle, 0);
+    xTaskCreatePinnedToCore(module_runner_100Hz, "100_HZ", TASK_STACK_SIZE, 0, 6, &module_runner_100Hz_handle, 0);
+    xTaskCreatePinnedToCore(module_runner_1kHz, "1k_HZ", TASK_STACK_SIZE, 0, 7, &module_runner_1kHz_handle, 0);
 
     create_tasking_interrupt();
 }
