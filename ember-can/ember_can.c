@@ -21,6 +21,8 @@
 
 // ######      PROTOTYPES       ###### //
 
+void freelunch_can_rx_callback(uint32_t id, uint8_t* data, uint8_t len);
+
 // ######     PRIVATE DATA      ###### //
 
 static bool can_ready;
@@ -37,7 +39,7 @@ ember_rate_funcs_S can_rf = {
 
 static void can_init()
 {
-    const twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(CAN_TX_GPIO, CAN_RX_GPIO, TWAI_MODE_NORMAL);
+    const twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(CAN_TX_GPIO, CAN_RX_GPIO, TWAI_MODE_NO_ACK);
     const twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS();
     const twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
 
@@ -77,6 +79,7 @@ static void can_1kHz()
 
             case ESP_OK:
                 CANRX_handle_rx(message.identifier, message.data, message.data_length_code);
+                freelunch_can_rx_callback(message.identifier, message.data, message.data_length_code);
                 break;
 
             default: // error
@@ -95,6 +98,7 @@ void CAN_callback_enqueue_tx_message(const uint8_t * const data, const uint8_t l
         .identifier = id,
         .extd = true, // todo
         .data_length_code = len,
+        .self = true, // for freelunch
     };
 
     /* copy the provided data into the twai_message_t */
