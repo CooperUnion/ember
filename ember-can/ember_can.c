@@ -21,7 +21,7 @@
 
 // ######      PROTOTYPES       ###### //
 
-void freelunch_can_rx_callback(uint32_t id, uint8_t* data, uint8_t len);
+void freelunch_can_rx_callback(const twai_message_t *message);
 
 // ######     PRIVATE DATA      ###### //
 
@@ -79,7 +79,7 @@ static void can_1kHz()
 
             case ESP_OK:
                 CANRX_handle_rx(message.identifier, message.data, message.data_length_code);
-                freelunch_can_rx_callback(message.identifier, message.data, message.data_length_code);
+                freelunch_can_rx_callback(&message);
                 break;
 
             default: // error
