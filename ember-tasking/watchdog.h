@@ -8,7 +8,7 @@ void task_10Hz_wdt_kick();
 void task_100Hz_wdt_kick();
 void task_1kHz_wdt_kick();
 
-void IRAM_ATTR task_wdt_servicer();
+void task_wdt_servicer();
 
 void set_up_rtc_watchdog_for_init();
 void set_up_rtc_watchdog_final();

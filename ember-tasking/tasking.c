@@ -1,6 +1,7 @@
 #include "tasking.h"
 #include "ember_taskglue.h"
 
+#include <esp_attr.h>
 #include <driver/timer.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -18,12 +19,12 @@
 
 static void create_tasking_interrupt();
 
-static IRAM_ATTR void module_runner_1Hz();
-static IRAM_ATTR void module_runner_10Hz();
-static IRAM_ATTR void module_runner_100Hz();
-static IRAM_ATTR void module_runner_1kHz();
+static void module_runner_1Hz();
+static void module_runner_10Hz();
+static void module_runner_100Hz();
+static void module_runner_1kHz();
 
-static bool IRAM_ATTR task_granter(void* unused);
+static bool task_granter(void* unused);
 
 // ######     PRIVATE DATA      ###### //
 
