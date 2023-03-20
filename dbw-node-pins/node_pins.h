@@ -9,4 +9,8 @@
 #include "node-1.2.h"
 #endif
 
+#ifdef NODE_BOARD_2V0
+#include "node-2.0.h"
+#endif
+
 #endif
