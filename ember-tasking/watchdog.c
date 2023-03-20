@@ -130,7 +130,7 @@ void IRAM_ATTR task_wdt_servicer()
  *
  * //todo: error handling
  */
-void set_up_rtc_watchdog(uint timeout_ms)
+void set_up_rtc_watchdog(uint32_t timeout_ms)
 {
     (void)timeout_ms;
     // rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
