@@ -7,7 +7,7 @@
 #include <freertos/task.h>
 #include <freertos/semphr.h>
 
-#include "common.h"
+#include "ember_common.h"
 #include "watchdog.h"
 
 // ######        DEFINES        ###### //

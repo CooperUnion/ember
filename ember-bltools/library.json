@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Ember bootloader interface tools",
   "dependencies": {
-    "ember-tasking": "*"
+    "ember-tasking": "*",
+    "ember-commonh": "*"
   }
 }

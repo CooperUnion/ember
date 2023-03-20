@@ -7,7 +7,7 @@
 #include <esp_timer.h>
 #include <driver/twai.h>
 
-#include "common.h"
+#include "ember_common.h"
 #include "ember_taskglue.h"
 #include "node_pins.h"
 #include "opencan_callbacks.h"

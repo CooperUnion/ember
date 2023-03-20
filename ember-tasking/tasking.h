@@ -3,7 +3,7 @@
 
 #include <freertos/FreeRTOS.h>
 
-#include "common.h"
+#include "ember_common.h"
 
 void tasking_init();
 void modules_init();

@@ -4,7 +4,7 @@
 #include <freertos/FreeRTOS.h>
 // #include <soc/rtc_wdt.h>
 
-#include "common.h"
+#include "ember_common.h"
 
 /*
  * watchdog - EXPERIMENTAL IMPLEMENTATION
