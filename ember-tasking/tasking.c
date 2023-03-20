@@ -2,7 +2,14 @@
 #include "ember_taskglue.h"
 
 #include <esp_attr.h>
+
+// TODO: migrate to gptimer
+// Disable deprecation warning so we can build with -Werror.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcpp"
 #include <driver/timer.h>
+#pragma GCC diagnostic pop
+
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>
