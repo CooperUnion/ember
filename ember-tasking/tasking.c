@@ -13,6 +13,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>
+#include <soc/rtc.h>
 
 #include "ember_common.h"
 #include "watchdog.h"
@@ -89,12 +90,16 @@ static bool IRAM_ATTR task_granter(void* unused)
  */
 static void create_tasking_interrupt()
 {
+    // clock source will be peripheral bus (APB) clock
+    const uint32_t TIMER_RATE_HZ = 1000000; // 1MHz
+
     const timer_config_t granter_cfg = {
         .alarm_en = TIMER_ALARM_EN,
         .counter_en = TIMER_PAUSE,
         .counter_dir = TIMER_COUNT_UP,
         .auto_reload = TIMER_AUTORELOAD_EN,
-        .divider = 80, // 80MHz/80 = 1MHz timer rate
+        .divider = rtc_clk_apb_freq_get() / TIMER_RATE_HZ,
+        .clk_src = GPTIMER_CLK_SRC_APB,
     };
 
     timer_init(TIMER_GROUP, &granter_cfg);
