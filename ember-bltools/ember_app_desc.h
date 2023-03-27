@@ -12,13 +12,19 @@
 // Just make sure char is 1 byte wide
 _Static_assert(sizeof(char) == 1, "Expected char to be 1 byte wide");
 
+#define EMBER_MAGIC "COOPERU"
+#define EMBER_APP_DESC_VERSION 1
+
 // Ember app description struct.
 typedef struct __attribute__((packed)) {
-    char node_identity[16];
+    const char ember_magic[sizeof(EMBER_MAGIC)];
+    const uint16_t app_desc_version;
+
+    const char node_identity[16];
 } ember_app_desc_v1_t;
 
 // Double-check size of struct
-_Static_assert(sizeof(ember_app_desc_v1_t) == 16, "Expected app desc to be 16 bytes wide");
+_Static_assert(sizeof(ember_app_desc_v1_t) == 26, "Expected app desc to be 26 bytes wide");
 
 // Global declaration of the description struct in .rodata_custom_desc
 // Be aware that the bootloader and app will have their own ember_app_description.
