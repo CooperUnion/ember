@@ -2,6 +2,9 @@
 
 #include <esp_attr.h>
 #include <freertos/FreeRTOS.h>
+#include <hal/wdt_hal.h>
+#include <hal/rwdt_ll.h>
+// #include <hal/lpwdt_ll.h>
 // #include <soc/rtc_wdt.h>
 
 #include "ember_common.h"
@@ -28,6 +31,13 @@ static volatile bool task_10Hz_checkin;
 static volatile bool task_100Hz_checkin;
 static volatile bool task_1kHz_checkin;
 
+wdt_hal_context_t hal = {
+    .inst = WDT_RWDT,
+    // Would use DEV_GET() but its not defined in V5.0, instead going direct to memory add
+    .rwdt_dev = &RTCCNTL
+};
+// Need to clarify whats going on with macro here
+
 // ######   PRIVATE FUNCTIONS   ###### //
 
 /*
@@ -35,8 +45,11 @@ static volatile bool task_1kHz_checkin;
  */
 static IRAM_ATTR void kick_rtc_watchdog()
 {
+    wdt_hal_write_protect_disable(&hal);
     // rtc_wdt_protect_off();
+    wdt_hal_feed(&hal);
     // rtc_wdt_feed();
+    wdt_hal_write_protect_enable(&hal);
     // rtc_wdt_protect_on();
 }
 
@@ -133,12 +146,22 @@ void IRAM_ATTR task_wdt_servicer()
 void set_up_rtc_watchdog(uint32_t timeout_ms)
 {
     (void)timeout_ms;
+    wdt_hal_init(&hal, hal.inst, 0, false);
+    wdt_hal_write_protect_disable(&hal);
     // rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
     // rtc_wdt_disable();
+
+    // wdt equivalent does not exist, length is predetermined as RTC_WDT_LENGTH_3_2us
+
     // rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
+
+    wdt_hal_config_stage(&hal, timeout_ms, WDT_STAGE0, WDT_STAGE_ACTION_RESET_RTC);
     // rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
     // rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
+    
+    wdt_hal_enable(&hal);
     // rtc_wdt_enable();
+    wdt_hal_write_protect_enable(&hal);
     // rtc_wdt_protect_on(); // disables modifying the rtc watchdog registers
 }
 
@@ -167,4 +190,3 @@ void set_up_rtc_watchdog_1sec()
 {
     set_up_rtc_watchdog(FW_UPDATE_TIMEOUT_MS);
 }
-
