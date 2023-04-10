@@ -2,7 +2,7 @@
 
 #include <esp_ota_ops.h>
 
-#include "common.h"
+#include "ember_common.h"
 #include "ember_tasking.h"
 
 static bool set_boot_partition_to_factory(void) {

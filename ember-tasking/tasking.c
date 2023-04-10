@@ -1,29 +1,35 @@
 #include "tasking.h"
 #include "ember_taskglue.h"
 
+#include <esp_attr.h>
+
+// TODO: migrate to gptimer
+// Use sdkconfig option CONFIG_GPTIMER_SUPPRESS_DEPRECATE_WARN.
 #include <driver/timer.h>
+
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>
+#include <soc/rtc.h>
 
-#include "common.h"
+#include "ember_common.h"
 #include "watchdog.h"
 
 // ######        DEFINES        ###### //
 
 #define TIMER_GROUP 0, 0
-#define TASK_STACK_SIZE 4000
+#define TASK_STACK_SIZE 8192
 
 // ######      PROTOTYPES       ###### //
 
 static void create_tasking_interrupt();
 
-static IRAM_ATTR void module_runner_1Hz();
-static IRAM_ATTR void module_runner_10Hz();
-static IRAM_ATTR void module_runner_100Hz();
-static IRAM_ATTR void module_runner_1kHz();
+static void module_runner_1Hz();
+static void module_runner_10Hz();
+static void module_runner_100Hz();
+static void module_runner_1kHz();
 
-static bool IRAM_ATTR task_granter(void* unused);
+static bool task_granter(void* unused);
 
 // ######     PRIVATE DATA      ###### //
 
@@ -76,17 +82,21 @@ static bool IRAM_ATTR task_granter(void* unused)
 
 /*
  * Set up the 1kHz timer interrupt task_granter(), but don't start it yet.
- * 
+ *
  * After this, it's ready to go - call timer_start(TIMER_GROUP) to start it.
  */
 static void create_tasking_interrupt()
 {
+    // clock source will be peripheral bus (APB) clock
+    const uint32_t TIMER_RATE_HZ = 1000000; // 1MHz
+
     const timer_config_t granter_cfg = {
         .alarm_en = TIMER_ALARM_EN,
         .counter_en = TIMER_PAUSE,
         .counter_dir = TIMER_COUNT_UP,
         .auto_reload = TIMER_AUTORELOAD_EN,
-        .divider = 80, // 80MHz/80 = 1MHz timer rate
+        .divider = rtc_clk_apb_freq_get() / TIMER_RATE_HZ,
+        .clk_src = GPTIMER_CLK_SRC_APB,
     };
 
     timer_init(TIMER_GROUP, &granter_cfg);
@@ -173,11 +183,12 @@ void tasking_init()
     static TaskHandle_t module_runner_100Hz_handle;
     static TaskHandle_t module_runner_1kHz_handle;
 
-    // we need to give more thought to the priorities here, I think
-    xTaskCreatePinnedToCore(module_runner_1Hz, "1_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_1Hz_handle, 0);
-    xTaskCreatePinnedToCore(module_runner_10Hz, "10_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_10Hz_handle, 0);
-    xTaskCreatePinnedToCore(module_runner_100Hz, "100_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_100Hz_handle, 0);
-    xTaskCreatePinnedToCore(module_runner_1kHz, "1k_HZ", TASK_STACK_SIZE, 0, 0, &module_runner_1kHz_handle, 0);
+    // idle task has priority 0, app_main task has priority 1.
+    // we start the runner tasks at priority 4 and increase in order of frequency.
+    xTaskCreatePinnedToCore(module_runner_1Hz, "1_HZ", TASK_STACK_SIZE, 0, 4, &module_runner_1Hz_handle, 0);
+    xTaskCreatePinnedToCore(module_runner_10Hz, "10_HZ", TASK_STACK_SIZE, 0, 5, &module_runner_10Hz_handle, 0);
+    xTaskCreatePinnedToCore(module_runner_100Hz, "100_HZ", TASK_STACK_SIZE, 0, 6, &module_runner_100Hz_handle, 0);
+    xTaskCreatePinnedToCore(module_runner_1kHz, "1k_HZ", TASK_STACK_SIZE, 0, 7, &module_runner_1kHz_handle, 0);
 
     create_tasking_interrupt();
 }
