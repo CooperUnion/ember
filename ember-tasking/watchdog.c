@@ -2,7 +2,10 @@
 
 #include <esp_attr.h>
 #include <freertos/FreeRTOS.h>
-// #include <soc/rtc_wdt.h>
+
+#if !CONFIG_IDF_TARGET_ESP32S3
+#include <rtc_wdt.h>
+#endif
 
 #include "ember_common.h"
 
@@ -35,9 +38,12 @@ static volatile bool task_1kHz_checkin;
  */
 static IRAM_ATTR void kick_rtc_watchdog()
 {
-    // rtc_wdt_protect_off();
-    // rtc_wdt_feed();
-    // rtc_wdt_protect_on();
+// FIXME: watchdog for esp32s3
+#if !CONFIG_IDF_TARGET_ESP32S3
+    rtc_wdt_protect_off();
+    rtc_wdt_feed();
+    rtc_wdt_protect_on();
+#endif
 }
 
 // ######   PUBLIC FUNCTIONS    ###### //
@@ -132,14 +138,16 @@ void IRAM_ATTR task_wdt_servicer()
  */
 void set_up_rtc_watchdog(uint32_t timeout_ms)
 {
-    (void)timeout_ms;
-    // rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
-    // rtc_wdt_disable();
-    // rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
-    // rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
-    // rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
-    // rtc_wdt_enable();
-    // rtc_wdt_protect_on(); // disables modifying the rtc watchdog registers
+// FIXME: watchdog for esp32s3
+#if !CONFIG_IDF_TARGET_ESP32S3
+    rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
+    rtc_wdt_disable();
+    rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
+    rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
+    rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
+    rtc_wdt_enable();
+    rtc_wdt_protect_on(); // disables modifying the rtc watchdog registers
+#endif
 }
 
 

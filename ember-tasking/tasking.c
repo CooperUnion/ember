@@ -4,11 +4,8 @@
 #include <esp_attr.h>
 
 // TODO: migrate to gptimer
-// Disable deprecation warning so we can build with -Werror.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcpp"
+// Use sdkconfig option CONFIG_GPTIMER_SUPPRESS_DEPRECATE_WARN.
 #include <driver/timer.h>
-#pragma GCC diagnostic pop
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
