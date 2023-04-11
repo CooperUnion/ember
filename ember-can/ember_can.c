@@ -50,7 +50,7 @@ static void can_init()
         .rx_queue_len = 8,
         .alerts_enabled = TWAI_ALERT_NONE,
         .clkout_divider = 0,
-        .intr_flags = ESP_INTR_FLAG_LEVEL1
+        .intr_flags = ESP_INTR_FLAG_IRAM
     };
 
     const twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS();
