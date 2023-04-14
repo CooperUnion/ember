@@ -155,7 +155,7 @@ void set_up_rtc_watchdog(uint32_t timeout_ms)
 
     // rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
 
-    wdt_hal_config_stage(&hal, timeout_ms, WDT_STAGE0, WDT_STAGE_ACTION_RESET_RTC);
+    wdt_hal_config_stage(&hal, WDT_STAGE0, timeout_ms, WDT_STAGE_ACTION_RESET_RTC);
     // rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
     // rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
     
