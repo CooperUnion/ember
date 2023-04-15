@@ -4,8 +4,7 @@
 #include <freertos/FreeRTOS.h>
 #include <hal/wdt_hal.h>
 #include <hal/rwdt_ll.h>
-// #include <hal/lpwdt_ll.h>
-// #include <soc/rtc_wdt.h>
+#include <soc/rtc.h>
 
 #include "ember_common.h"
 
@@ -145,26 +144,18 @@ void IRAM_ATTR task_wdt_servicer()
  */
 void set_up_rtc_watchdog(uint32_t timeout_ms)
 {
-    (void)timeout_ms;
+    wdt_hal_deinit(&hal);
     wdt_hal_init(&hal, hal.inst, 0, false);
     wdt_hal_write_protect_disable(&hal);
-    // rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
-    // rtc_wdt_disable();
 
-    // wdt equivalent does not exist, length is predetermined as RTC_WDT_LENGTH_3_2us
+    // ticks calculation derived from esp-idf (see esp_restart_noos())
+    const uint32_t stage_timeout_ticks =
+        (uint32_t)((uint64_t)timeout_ms * rtc_clk_slow_freq_get_hz() / 1000);
 
-    // rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
-
-    wdt_hal_config_stage(&hal, WDT_STAGE0, timeout_ms, WDT_STAGE_ACTION_RESET_RTC);
-    // rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
-    // rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
-    
+    wdt_hal_config_stage(&hal, WDT_STAGE0, stage_timeout_ticks, WDT_STAGE_ACTION_RESET_RTC);
     wdt_hal_enable(&hal);
-    // rtc_wdt_enable();
     wdt_hal_write_protect_enable(&hal);
-    // rtc_wdt_protect_on(); // disables modifying the rtc watchdog registers
 }
-
 
 /*
  * Configure the watchdog with a temporarily larger timeout so we can run the
