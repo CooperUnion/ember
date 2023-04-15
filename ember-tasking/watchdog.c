@@ -10,7 +10,7 @@
 
 /*
  * watchdog - EXPERIMENTAL IMPLEMENTATION
-*/
+ */
 
 // ######        DEFINES        ###### //
 
@@ -30,12 +30,10 @@ static volatile bool task_10Hz_checkin;
 static volatile bool task_100Hz_checkin;
 static volatile bool task_1kHz_checkin;
 
-wdt_hal_context_t hal = {
+static wdt_hal_context_t hal = {
     .inst = WDT_RWDT,
-    // Would use DEV_GET() but its not defined in V5.0, instead going direct to memory add
     .rwdt_dev = &RTCCNTL
 };
-// Need to clarify whats going on with macro here
 
 // ######   PRIVATE FUNCTIONS   ###### //
 
@@ -45,11 +43,8 @@ wdt_hal_context_t hal = {
 static IRAM_ATTR void kick_rtc_watchdog()
 {
     wdt_hal_write_protect_disable(&hal);
-    // rtc_wdt_protect_off();
     wdt_hal_feed(&hal);
-    // rtc_wdt_feed();
     wdt_hal_write_protect_enable(&hal);
-    // rtc_wdt_protect_on();
 }
 
 // ######   PUBLIC FUNCTIONS    ###### //
