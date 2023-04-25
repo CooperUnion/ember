@@ -2,16 +2,15 @@
 
 #include <esp_attr.h>
 #include <freertos/FreeRTOS.h>
-
-#if !CONFIG_IDF_TARGET_ESP32S3
-#include <rtc_wdt.h>
-#endif
+#include <hal/wdt_hal.h>
+#include <hal/rwdt_ll.h>
+#include <soc/rtc.h>
 
 #include "ember_common.h"
 
 /*
  * watchdog - EXPERIMENTAL IMPLEMENTATION
-*/
+ */
 
 // ######        DEFINES        ###### //
 
@@ -31,6 +30,11 @@ static volatile bool task_10Hz_checkin;
 static volatile bool task_100Hz_checkin;
 static volatile bool task_1kHz_checkin;
 
+static wdt_hal_context_t hal = {
+    .inst = WDT_RWDT,
+    .rwdt_dev = &RTCCNTL
+};
+
 // ######   PRIVATE FUNCTIONS   ###### //
 
 /*
@@ -38,12 +42,9 @@ static volatile bool task_1kHz_checkin;
  */
 static IRAM_ATTR void kick_rtc_watchdog()
 {
-// FIXME: watchdog for esp32s3
-#if !CONFIG_IDF_TARGET_ESP32S3
-    rtc_wdt_protect_off();
-    rtc_wdt_feed();
-    rtc_wdt_protect_on();
-#endif
+    wdt_hal_write_protect_disable(&hal);
+    wdt_hal_feed(&hal);
+    wdt_hal_write_protect_enable(&hal);
 }
 
 // ######   PUBLIC FUNCTIONS    ###### //
@@ -138,18 +139,18 @@ void IRAM_ATTR task_wdt_servicer()
  */
 void set_up_rtc_watchdog(uint32_t timeout_ms)
 {
-// FIXME: watchdog for esp32s3
-#if !CONFIG_IDF_TARGET_ESP32S3
-    rtc_wdt_protect_off(); // allows us to modify the rtc watchdog registers
-    rtc_wdt_disable();
-    rtc_wdt_set_length_of_reset_signal(RTC_WDT_SYS_RESET_SIG, RTC_WDT_LENGTH_3_2us);
-    rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_RTC);
-    rtc_wdt_set_time(RTC_WDT_STAGE0, timeout_ms);
-    rtc_wdt_enable();
-    rtc_wdt_protect_on(); // disables modifying the rtc watchdog registers
-#endif
-}
+    wdt_hal_deinit(&hal);
+    wdt_hal_init(&hal, hal.inst, 0, false);
+    wdt_hal_write_protect_disable(&hal);
 
+    // ticks calculation derived from esp-idf (see esp_restart_noos())
+    const uint32_t stage_timeout_ticks =
+        (uint32_t)((uint64_t)timeout_ms * rtc_clk_slow_freq_get_hz() / 1000);
+
+    wdt_hal_config_stage(&hal, WDT_STAGE0, stage_timeout_ticks, WDT_STAGE_ACTION_RESET_RTC);
+    wdt_hal_enable(&hal);
+    wdt_hal_write_protect_enable(&hal);
+}
 
 /*
  * Configure the watchdog with a temporarily larger timeout so we can run the
@@ -175,4 +176,3 @@ void set_up_rtc_watchdog_1sec()
 {
     set_up_rtc_watchdog(FW_UPDATE_TIMEOUT_MS);
 }
-
