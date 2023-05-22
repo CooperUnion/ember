@@ -44,8 +44,8 @@ static void can_init()
         .rx_io = CAN_RX_GPIO,
         .clkout_io = TWAI_IO_UNUSED,
         .bus_off_io = TWAI_IO_UNUSED,
-        .tx_queue_len = 8,
-        .rx_queue_len = 8,
+        .tx_queue_len = 64,
+        .rx_queue_len = 64,
         .alerts_enabled = TWAI_ALERT_NONE,
         .clkout_divider = 0,
         .intr_flags = ESP_INTR_FLAG_LEVEL1
