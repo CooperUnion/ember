@@ -106,7 +106,6 @@ void CAN_callback_enqueue_tx_message(const uint8_t * const data, const uint8_t l
     /* prepare twai_message_t */
     twai_message_t message = {
         .identifier = id,
-        .extd = true, // todo
         .data_length_code = len,
     };
 
