@@ -139,17 +139,17 @@ void IRAM_ATTR task_wdt_servicer()
  */
 void set_up_rtc_watchdog(uint32_t timeout_ms)
 {
-    wdt_hal_deinit(&hal);
-    wdt_hal_init(&hal, hal.inst, 0, false);
-    wdt_hal_write_protect_disable(&hal);
+    // wdt_hal_deinit(&hal);
+    // wdt_hal_init(&hal, hal.inst, 0, false);
+    // wdt_hal_write_protect_disable(&hal);
 
-    // ticks calculation derived from esp-idf (see esp_restart_noos())
-    const uint32_t stage_timeout_ticks =
-        (uint32_t)((uint64_t)timeout_ms * rtc_clk_slow_freq_get_hz() / 1000);
+    // // ticks calculation derived from esp-idf (see esp_restart_noos())
+    // const uint32_t stage_timeout_ticks =
+    //     (uint32_t)((uint64_t)timeout_ms * rtc_clk_slow_freq_get_hz() / 1000);
 
-    wdt_hal_config_stage(&hal, WDT_STAGE0, stage_timeout_ticks, WDT_STAGE_ACTION_RESET_RTC);
-    wdt_hal_enable(&hal);
-    wdt_hal_write_protect_enable(&hal);
+    // wdt_hal_config_stage(&hal, WDT_STAGE0, stage_timeout_ticks, WDT_STAGE_ACTION_RESET_RTC);
+    // wdt_hal_enable(&hal);
+    // wdt_hal_write_protect_enable(&hal);
 }
 
 /*
