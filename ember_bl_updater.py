@@ -19,8 +19,6 @@ iface = 'can0'
 
 SLEEP_WAIT = 0.01
 
-TARGET_NODE = 'THROTTLE'
-
 # current chunk; global and shared
 chunk = 0
 
