@@ -1,5 +1,3 @@
-# Simple script to add a #define for EMBER_NODE_IDENTITY.
-
 from SCons.Script import ARGUMENTS
 
 def get_ember_identity(env):
@@ -18,10 +16,4 @@ def get_ember_identity(env):
         if int(ARGUMENTS.get("PIOVERBOSE", 0)):
             print(f"Using board_can_node as node identity: {identity}")
 
-    env.Append(CPPDEFINES=[("EMBER_NODE_IDENTITY", f'{identity}')])
-
     return identity
-
-if __name__ == "__main__":
-    Import('env')
-    get_ember_identity(env)
