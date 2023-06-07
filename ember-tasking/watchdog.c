@@ -40,11 +40,13 @@ static wdt_hal_context_t hal = {
 /*
  * Kick hardware watchdog.
  */
-static IRAM_ATTR void kick_rtc_watchdog()
+static IRAM_ATTR void kick_rtc_watchdog(void)
 {
+#ifndef EMBER_TASKING_DISABLE_WATCHDOG
     wdt_hal_write_protect_disable(&hal);
     wdt_hal_feed(&hal);
     wdt_hal_write_protect_enable(&hal);
+#endif
 }
 
 // ######   PUBLIC FUNCTIONS    ###### //
@@ -139,6 +141,7 @@ void IRAM_ATTR task_wdt_servicer()
  */
 void set_up_rtc_watchdog(uint32_t timeout_ms)
 {
+#ifndef EMBER_TASKING_DISABLE_WATCHDOG
     wdt_hal_deinit(&hal);
     wdt_hal_init(&hal, hal.inst, 0, false);
     wdt_hal_write_protect_disable(&hal);
@@ -150,6 +153,9 @@ void set_up_rtc_watchdog(uint32_t timeout_ms)
     wdt_hal_config_stage(&hal, WDT_STAGE0, stage_timeout_ticks, WDT_STAGE_ACTION_RESET_RTC);
     wdt_hal_enable(&hal);
     wdt_hal_write_protect_enable(&hal);
+#else
+    (void)timeout_ms;
+#endif
 }
 
 /*
