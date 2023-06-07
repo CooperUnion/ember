@@ -15,7 +15,6 @@ from time import sleep
 from tqdm import trange
 
 CHUNK_SIZE = 4095
-iface = 'can0'
 
 SLEEP_WAIT = 0.01
 
@@ -90,7 +89,7 @@ def main():
     print(f"Using isotp_tx_id {isotp_tx_id} and isotp_rx_id {isotp_rx_id}.")
 
     isotp_stack = isotp.CanStack(
-        can.interface.Bus('can0', bustype = 'socketcan'),
+        can.interface.Bus(args.iface, bustype = 'socketcan'),
         address = isotp.Address(isotp.AddressingMode.Normal_11bits, rxid=isotp_rx_id, txid=isotp_tx_id),
     )
     log.info('Created isotp stack')
