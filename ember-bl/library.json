@@ -1,0 +1,11 @@
+{
+  "name": "ember-bl",
+  "version": "1.0.0",
+  "description": "Ember CAN Bootloader",
+  "build": {
+    "libLDFMode": "deep"
+  },
+  "dependencies": {
+    "isotp": "https://github.com/dmezh/isotp-c.git#f5add4e6"
+  }
+}

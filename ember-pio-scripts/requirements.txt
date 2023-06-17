@@ -1,0 +1,4 @@
+can-isotp==1.8
+coloredlogs==15.0.1
+opencan-cand==0.1.2
+tqdm==4.65.0
