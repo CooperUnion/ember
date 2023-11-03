@@ -1,0 +1,23 @@
+---
+
+name: pre-commit
+
+# yamllint disable-line rule:truthy
+on:
+  - pull_request
+  - push
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Checkout `ember`
+        uses: ./.github/actions/checkout
+
+      - name: Run `pre-commit` hooks
+        run: pre-commit run --show-diff-on-failure --color=always
