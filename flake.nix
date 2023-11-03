@@ -19,8 +19,9 @@
       {
         devShells.default = pkgs.mkShell {
           packages = [
-            python
+            pkgs.act
             pkgs.nixpkgs-fmt
+            python
           ];
         };
       }
