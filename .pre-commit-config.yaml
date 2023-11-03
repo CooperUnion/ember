@@ -32,7 +32,7 @@ repos:
     hooks:
       - id: nixpkgs-fmt
 
-  - repo: https://github.com/lyz-code/yamlfix/
+  - repo: https://github.com/lyz-code/yamlfix
     rev: 1.13.0
     hooks:
       - id: yamlfix
