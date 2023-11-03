@@ -14,7 +14,11 @@ license = {'text' = 'GPL-3.0-only'}
 
 requires-python = '>=3.11'
 dependencies = [
+	'mdformat-gfm',
 	'pip-tools',
+	'pre-commit',
+	'yamlfix',
+	'yamllint',
 ]
 
 [project.urls]
@@ -29,3 +33,9 @@ verbose         = true
 
 [tool.setuptools.packages.find]
 exclude = ['*']
+
+[tool.yamlfix]
+none_representation = '~'
+section_whitelines  = 1
+sequence_style      = 'block_style'
+whitelines          = 1
