@@ -13,10 +13,13 @@
           inherit system;
         };
 
+        python = pkgs.python311;
+
       in
       {
         devShells.default = pkgs.mkShell {
           packages = [
+            python
             pkgs.nixpkgs-fmt
           ];
         };
