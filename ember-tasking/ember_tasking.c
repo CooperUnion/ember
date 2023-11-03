@@ -14,4 +14,3 @@ void ember_tasking_begin(void) {
 void ember_tasking_set_1sec_watchdog(void) {
   set_up_rtc_watchdog(1000);
 }
-
