@@ -1,0 +1,22 @@
+---
+
+name: mdbook
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request: ~
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Checkout `ember`
+        uses: ./.github/actions/checkout
+
+      - name: Build docs
+        run: mdbook build
