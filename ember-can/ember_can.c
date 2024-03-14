@@ -122,11 +122,3 @@ void CAN_callback_enqueue_tx_message(const uint8_t * const data, const uint8_t l
 uint64_t CAN_callback_get_system_time(void) {
     return esp_timer_get_time();
 }
-
-void __attribute__((weak)) CANRX_handle_rx(uint32_t id, uint8_t * data, uint8_t len)
-{
-}
-
-void __attribute__((weak)) CANTX_scheduler_1kHz(void)
-{
-}
